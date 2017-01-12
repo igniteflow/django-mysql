@@ -4,10 +4,10 @@ from __future__ import (
 )
 
 import os
+import subprocess
 import time
 from collections import defaultdict
 from contextlib import contextmanager
-from subprocess import PIPE, Popen, call
 from threading import Lock, Thread
 
 from django.db import DEFAULT_DB_ALIAS, connections
@@ -141,7 +141,7 @@ programs_memo = {}
 def have_program(program_name):
     global programs_memo
     if program_name not in programs_memo:
-        status = call(['which', program_name], stdout=PIPE)
+        status = subprocess.call(['which', program_name], stdout=PIPE)
         programs_memo[program_name] = (status == 0)
 
     return programs_memo[program_name]
@@ -207,9 +207,9 @@ class PTFingerprintThread(Thread):
 
         global fingerprint_thread
         master, slave = pty.openpty()
-        proc = Popen(
+        proc = subprocess.Popen(
             ['pt-fingerprint'],
-            stdin=PIPE,
+            stdin=subprocess.PIPE,
             stdout=slave,
             close_fds=True
         )
